@@ -9,6 +9,7 @@ from aiogram.client.session.aiohttp import AiohttpSession
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
 import aiohttp
+from aiohttp import web
 import os
 from dotenv import load_dotenv
 
@@ -185,8 +186,20 @@ async def send_cmd(message: types.Message):
         except Exception: pass
     await message.answer("✅ Tugadi!")
 
+async def health_check(request):
+    return web.Response(text="Bot is running!")
+
 async def main():
     global bot_info, bot
+    
+    # Render uchun kichik web server (Web Service o'chib qolmasligi uchun)
+    app = web.Application()
+    app.router.add_get("/", health_check)
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, "0.0.0.0", int(os.getenv("PORT", 8080)))
+    asyncio.create_task(site.start())
+    
     while True:
         try:
             bot = Bot(token=TOKEN)

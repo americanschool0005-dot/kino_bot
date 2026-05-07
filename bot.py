@@ -16,10 +16,20 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # --- SOZLAMALAR ---
+def get_env_int(key):
+    val = os.getenv(key)
+    if val is None:
+        logging.error(f"❌ XATOLIK: {key} o'zgaruvchisi topilmadi! Render sozlamalarini tekshiring.")
+        return 0
+    return int(val)
+
 TOKEN = os.getenv("TOKEN")
-ADMIN_ID = int(os.getenv("ADMIN_ID"))
-CHANNEL_ID = int(os.getenv("CHANNEL_ID"))
+ADMIN_ID = get_env_int("ADMIN_ID")
+CHANNEL_ID = get_env_int("CHANNEL_ID")
 CHANNEL_URL = os.getenv("CHANNEL_URL")
+
+if not TOKEN:
+    logging.error("❌ XATOLIK: TOKEN topilmadi!")
 
 logging.basicConfig(level=logging.INFO)
 
